@@ -4,5 +4,8 @@
   "version": "1.0.0",
   "description": "Test candidats — signes de sécurité des billets (euro, dollar, livre sterling)",
   "type": "module",
-  "engines": { "node": ">=18" }
+  "engines": { "node": ">=18" },
+  "dependencies": {
+    "redis": "^4.7.0"
+  }
 }

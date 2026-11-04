@@ -1,24 +1,32 @@
-// Leaderboard API — Vercel serverless function, no dependencies.
-// Storage: Upstash Redis (Vercel Marketplace), reached over its REST API.
+// Leaderboard API — Vercel serverless function.
+// Storage: a standard Redis database (Redis Cloud via the Vercel Marketplace),
+// reached over the normal Redis protocol with the `redis` client.
 //
 //   GET    /api/scores          -> { rows: [...] } best 20, score desc then time asc
 //   POST   /api/scores          -> saves a candidate's attempt (best one is kept)
 //   DELETE /api/scores?key=...  -> clears the board (only if ADMIN_KEY is set)
 
-const URL = process.env.KV_REST_API_URL || process.env.UPSTASH_REDIS_REST_URL;
-const TOKEN = process.env.KV_REST_API_TOKEN || process.env.UPSTASH_REDIS_REST_TOKEN;
+import { createClient } from "redis";
+
+const REDIS_URL = process.env.REDIS_URL || process.env.KV_URL;
 const KEY = "quiz:scores";
 const TOTAL = 15;
 
-async function redis(cmd) {
-  const r = await fetch(URL, {
-    method: "POST",
-    headers: { Authorization: `Bearer ${TOKEN}`, "Content-Type": "application/json" },
-    body: JSON.stringify(cmd),
-  });
-  const j = await r.json();
-  if (!r.ok || j.error) throw new Error(j.error || `HTTP ${r.status}`);
-  return j.result;
+// One client per warm function instance, reconnected only when it has dropped.
+let client = null;
+let connecting = null;
+
+async function db() {
+  if (!REDIS_URL) return null;
+  if (!client) {
+    client = createClient({ url: REDIS_URL });
+    client.on("error", () => {});   // never let a socket error crash the function
+  }
+  if (!client.isOpen) {
+    if (!connecting) connecting = client.connect().finally(() => { connecting = null; });
+    await connecting;
+  }
+  return client;
 }
 
 const int = (v) => (Number.isInteger(v) ? v : NaN);
@@ -39,14 +47,16 @@ function clean(body) {
 
 export default async function handler(req, res) {
   res.setHeader("Cache-Control", "no-store");
-  if (!URL || !TOKEN) return res.status(503).json({ error: "storage_not_configured" });
+  if (!REDIS_URL) return res.status(503).json({ error: "storage_not_configured" });
 
   try {
+    const r = await db();
+
     if (req.method === "GET") {
-      const flat = (await redis(["HGETALL", KEY])) || [];
+      const all = await r.hGetAll(KEY);           // { id: json, ... }
       const rows = [];
-      for (let i = 0; i + 1 < flat.length; i += 2) {
-        try { const d = JSON.parse(flat[i + 1]); rows.push(d); } catch (_) {}
+      for (const raw of Object.values(all || {})) {
+        try { rows.push(JSON.parse(raw)); } catch (_) {}
       }
       rows.sort((a, b) => b.score - a.score || a.ms - b.ms);
       return res.status(200).json({
@@ -59,30 +69,29 @@ export default async function handler(req, res) {
     if (req.method === "POST") {
       const entry = clean(typeof req.body === "string" ? JSON.parse(req.body || "{}") : req.body);
       if (!entry) return res.status(400).json({ error: "invalid" });
-      const prev = await redis(["HGET", KEY, entry.id]);
+      const prev = await r.hGet(KEY, entry.id);
       if (prev) {
         const p = JSON.parse(prev);
         const better = entry.score > p.score || (entry.score === p.score && entry.ms < p.ms);
         if (!better) {                       // keep the best attempt, refresh the name only
-          if (p.name !== entry.name) { p.name = entry.name; await redis(["HSET", KEY, entry.id, JSON.stringify(p)]); }
+          if (p.name !== entry.name) { p.name = entry.name; await r.hSet(KEY, entry.id, JSON.stringify(p)); }
           return res.status(200).json({ saved: false, best: p });
         }
       }
-      await redis(["HSET", KEY, entry.id, JSON.stringify(entry)]);
+      await r.hSet(KEY, entry.id, JSON.stringify(entry));
       return res.status(200).json({ saved: true, best: entry });
     }
 
     if (req.method === "DELETE") {
       const admin = process.env.ADMIN_KEY;
       if (!admin || req.query.key !== admin) return res.status(403).json({ error: "forbidden" });
-      await redis(["DEL", KEY]);
+      await r.del(KEY);
       return res.status(200).json({ cleared: true });
     }
 
     res.setHeader("Allow", "GET, POST, DELETE");
     return res.status(405).json({ error: "method_not_allowed" });
   } catch (e) {
-    return res.status(500).json({ error: "storage_error" });
+    return res.status(500).json({ error: "storage_error", detail: String(e && e.message || e).slice(0, 120) });
   }
 }
-

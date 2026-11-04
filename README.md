@@ -4,8 +4,19 @@ Trois tests (euro, dollar, livre sterling — 5 questions chacun) et un classeme
 pour la formation « Détection et identification des faux billets de banque étrangers ».
 
 - `index.html` — le test (mobile d’abord)
-- `api/scores.js` — l’API du classement (fonction Vercel, aucune dépendance)
+- `api/scores.js` — l’API du classement (fonction Vercel, base Redis via `REDIS_URL`)
 - `admin.html` — remise à zéro du classement entre deux sessions
+
+## Vérifier que le classement fonctionne
+
+Ouvrez `https://<votre-site>.vercel.app/api/scores` dans un navigateur :
+
+| Réponse | Signification |
+| --- | --- |
+| `{"rows":[],"count":0}` | tout fonctionne, aucun score pour l’instant |
+| `{"error":"storage_not_configured"}` | `REDIS_URL` absente — base non reliée au projet, ou pas de redéploiement |
+| `{"error":"storage_error"}` | base joignable mais la connexion échoue (voir `detail`) |
+| `The page could not be found` | le dossier `api` n’est pas dans le dépôt GitHub |
 
 ## Mise en ligne (une seule fois, ~10 minutes)
 
@@ -15,8 +26,9 @@ pour la formation « Détection et identification des faux billets de banque ét
 2. **Vercel** — *Add New… → Project*, importez le dépôt, gardez les réglages
    par défaut (aucun framework, aucune commande de build) et cliquez *Deploy*.
 3. **Base de données du classement** — dans le projet Vercel : onglet *Storage* →
-   *Create Database* → **Upstash for Redis** (offre gratuite) → connectez-la au projet.
-   Les variables `KV_REST_API_URL` et `KV_REST_API_TOKEN` sont ajoutées automatiquement.
+   *Create Database* → une base **Redis** du Marketplace (offre gratuite) →
+   *Connect to Project* pour la relier à ce projet. La variable `REDIS_URL` est
+   ajoutée automatiquement ; c’est la seule dont l’API a besoin.
 4. *(Recommandé)* *Settings → Environment Variables* : ajoutez `ADMIN_KEY` avec un mot
    de passe de votre choix (il sert à remettre le classement à zéro).
 5. **Redéployez** (*Deployments → … → Redeploy*) pour que les étapes 3 et 4 soient prises en compte.
