@@ -1,0 +1,43 @@
+# Test candidats — signes de sécurité des billets
+
+Trois tests (euro, dollar, livre sterling — 5 questions chacun) et un classement en direct,
+pour la formation « Détection et identification des faux billets de banque étrangers ».
+
+- `index.html` — le test (mobile d’abord)
+- `api/scores.js` — l’API du classement (fonction Vercel, aucune dépendance)
+- `admin.html` — remise à zéro du classement entre deux sessions
+
+## Mise en ligne (une seule fois, ~10 minutes)
+
+1. **GitHub** — créez un dépôt nommé exactement `quiz-faux-billets-mzabi`,
+   puis « uploading an existing file » : déposez tout le contenu de ce dossier
+   (y compris le dossier `api`) et validez (*Commit changes*).
+2. **Vercel** — *Add New… → Project*, importez le dépôt, gardez les réglages
+   par défaut (aucun framework, aucune commande de build) et cliquez *Deploy*.
+3. **Base de données du classement** — dans le projet Vercel : onglet *Storage* →
+   *Create Database* → **Upstash for Redis** (offre gratuite) → connectez-la au projet.
+   Les variables `KV_REST_API_URL` et `KV_REST_API_TOKEN` sont ajoutées automatiquement.
+4. *(Recommandé)* *Settings → Environment Variables* : ajoutez `ADMIN_KEY` avec un mot
+   de passe de votre choix (il sert à remettre le classement à zéro).
+5. **Redéployez** (*Deployments → … → Redeploy*) pour que les étapes 3 et 4 soient prises en compte.
+
+## Vérifier l’adresse
+
+Le QR code de la présentation pointe vers **https://quiz-faux-billets-mzabi.vercel.app**.
+Vercel donne cette adresse si le projet porte ce nom. Si l’adresse affichée par Vercel
+est différente, renommez le projet (*Settings → General → Project Name*) ou faites
+regénérer le QR code avec la bonne adresse.
+
+## Pendant la formation
+
+- Les candidats scannent le QR code, saisissent leur nom et font les trois tests.
+- Classement sur le projecteur : **https://quiz-faux-billets-mzabi.vercel.app/#classement**
+  (se met à jour toutes les 5 secondes).
+- Seule la meilleure tentative de chaque candidat (par téléphone) est conservée.
+- Remise à zéro : **/admin.html** et la clé `ADMIN_KEY`.
+
+## Limites à connaître
+
+Pas de comptes : un candidat est identifié par son nom et son téléphone. C’est adapté à
+une session de formation, pas à un examen certifiant — une personne déterminée pourrait
+inscrire un faux score en appelant l’API directement.

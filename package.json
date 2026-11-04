@@ -1,0 +1,8 @@
+{
+  "name": "quiz-faux-billets-mzabi",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Test candidats — signes de sécurité des billets (euro, dollar, livre sterling)",
+  "type": "module",
+  "engines": { "node": ">=18" }
+}

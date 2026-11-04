@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex"><title>Administration — classement</title>
+<style>
+body{margin:0;background:#070b19;color:#f4f5f7;font-family:"Segoe UI",Roboto,Arial,sans-serif}
+.w{max-width:520px;margin:40px auto;padding:0 18px}h1{font-size:1.3rem}
+p{color:#9aa3b5;line-height:1.5}input{font:inherit;width:100%;box-sizing:border-box;padding:11px 13px;border-radius:10px;
+border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.06);color:#fff;margin:8px 0 14px}
+button{font:inherit;font-weight:700;border:0;border-radius:22px;padding:11px 20px;background:#ff7a00;color:#15223f;cursor:pointer}
+#m{margin-top:14px;font-weight:700}a{color:#ff7a00}
+</style></head><body><div class="w">
+<h1>Remettre le classement à zéro</h1>
+<p>Efface tous les scores, par exemple avant une nouvelle session de formation.
+La clé est la valeur de la variable <b>ADMIN_KEY</b> définie dans Vercel.</p>
+<input id="k" type="password" placeholder="Clé d’administration" autocomplete="off">
+<button id="go">Effacer tous les scores</button>
+<div id="m"></div>
+<p><a href="/#classement">Voir le classement</a></p>
+</div><script>
+document.getElementById("go").onclick = async function () {
+  var k = document.getElementById("k").value, m = document.getElementById("m");
+  if (!k) { m.textContent = "Saisissez la clé."; return; }
+  if (!confirm("Effacer définitivement tous les scores ?")) return;
+  try {
+    var r = await fetch("/api/scores?key=" + encodeURIComponent(k), { method: "DELETE" });
+    m.textContent = r.ok ? "Classement remis à zéro." : (r.status === 403 ? "Clé incorrecte (ou ADMIN_KEY non définie dans Vercel)." : "Erreur " + r.status + ".");
+  } catch (e) { m.textContent = "Pas de connexion."; }
+};
+</script></body></html>
