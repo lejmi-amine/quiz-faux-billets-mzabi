@@ -19,7 +19,7 @@ Les trois questions UV et infrarouge utilisent les images officielles de la broc
 
 ### Photos de faux billets à fournir
 
-Les neuf vignettes marquées **IMAGE À FOURNIR** attendent les photos de faux billets.
+Les sept vignettes encore marquées **IMAGE À FOURNIR** attendent les photos de faux billets.
 Pour les intégrer : ajouter chaque photo dans `IMGS` (`index.html`) sous une clé propre,
 puis remplacer les `{ img: "todo" }` correspondants dans les questions `type: "pick"`.
 Tant que ces images restent des marques de réservation, la bonne réponse se devine
