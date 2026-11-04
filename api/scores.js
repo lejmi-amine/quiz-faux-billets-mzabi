@@ -10,7 +10,10 @@ import { createClient } from "redis";
 
 const REDIS_URL = process.env.REDIS_URL || process.env.KV_URL;
 const KEY = "quiz:scores";
-const TOTAL = 15;
+// Questions per test, in the same order as TESTS in index.html.
+// Keep these in step with the quiz, or valid attempts will be rejected.
+const MAX = { eur: 8, usd: 5, gbp: 5 };
+const TOTAL = MAX.eur + MAX.usd + MAX.gbp;
 
 // One client per warm function instance, reconnected only when it has dropped.
 let client = null;
@@ -40,7 +43,8 @@ function clean(body) {
   if (!/^[a-z0-9]{8,40}$/i.test(id)) return null;
   if (name.length < 2 || name.length > 40) return null;
   if (!/^[A-Za-z0-9][A-Za-z0-9._-]{1,19}$/.test(mat)) return null;
-  if (parts.some((p) => !(p >= 0 && p <= 5))) return null;
+  const caps = [MAX.eur, MAX.usd, MAX.gbp];
+  if (parts.some((p, i) => !(p >= 0 && p <= caps[i]))) return null;
   if (!(score >= 0 && score <= TOTAL) || parts[0] + parts[1] + parts[2] !== score) return null;
   if (!(ms >= 5000 && ms <= 2 * 3600 * 1000)) return null;   // 5 s .. 2 h
   return { id, name, mat, score, total: TOTAL, ms, eur: parts[0], usd: parts[1], gbp: parts[2],

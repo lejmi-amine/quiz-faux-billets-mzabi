@@ -4,6 +4,30 @@ Trois tests (euro, dollar, livre sterling — 5 questions chacun) et un classeme
 pour la formation « Détection et identification des faux billets de banque étrangers ».
 
 - `index.html` — le test (mobile d’abord)
+
+## Les questions
+
+18 questions au total : 8 pour l’euro, 5 pour le dollar, 5 pour la livre.
+Deux formes de question coexistent :
+
+- **zone à toucher** — un billet s’affiche, le candidat touche l’endroit du signe demandé ;
+- **choix d’image** (`type: "pick"`) — plusieurs billets côte à côte, le candidat
+  désigne l’authentique. L’ordre des vignettes est mélangé à chaque affichage.
+
+Les trois questions UV et infrarouge utilisent les images officielles de la brochure
+*The Europa series of banknotes* de la Banque centrale européenne (© BCE 2019).
+
+### Photos de faux billets à fournir
+
+Les neuf vignettes marquées **IMAGE À FOURNIR** attendent les photos de faux billets.
+Pour les intégrer : ajouter chaque photo dans `IMGS` (`index.html`) sous une clé propre,
+puis remplacer les `{ img: "todo" }` correspondants dans les questions `type: "pick"`.
+Tant que ces images restent des marques de réservation, la bonne réponse se devine
+au premier coup d’œil : ces trois questions ne comptent pas réellement.
+
+> Si le nombre de questions change, mettre à jour `MAX` dans `api/scores.js`
+> (`{ eur, usd, gbp }`), sinon les scores valides seront refusés — et remettre
+> le classement à zéro, pour ne pas mélanger des scores sur 15 et sur 18.
 - `api/scores.js` — l’API du classement (fonction Vercel, base Redis via `REDIS_URL`)
 - `admin.html` — remise à zéro du classement entre deux sessions
 
