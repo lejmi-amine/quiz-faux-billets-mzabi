@@ -34,14 +34,16 @@ function clean(body) {
   if (!body || typeof body !== "object") return null;
   const id = String(body.id || "");
   const name = String(body.name || "").replace(/[\u0000-\u001f<>]/g, "").replace(/\s+/g, " ").trim();
+  const mat = String(body.mat || "").replace(/\s+/g, "").trim();
   const parts = [int(body.eur), int(body.usd), int(body.gbp)];
   const score = int(body.score), ms = int(body.ms);
   if (!/^[a-z0-9]{8,40}$/i.test(id)) return null;
   if (name.length < 2 || name.length > 40) return null;
+  if (!/^[A-Za-z0-9][A-Za-z0-9._-]{1,19}$/.test(mat)) return null;
   if (parts.some((p) => !(p >= 0 && p <= 5))) return null;
   if (!(score >= 0 && score <= TOTAL) || parts[0] + parts[1] + parts[2] !== score) return null;
   if (!(ms >= 5000 && ms <= 2 * 3600 * 1000)) return null;   // 5 s .. 2 h
-  return { id, name, score, total: TOTAL, ms, eur: parts[0], usd: parts[1], gbp: parts[2],
+  return { id, name, mat, score, total: TOTAL, ms, eur: parts[0], usd: parts[1], gbp: parts[2],
            at: new Date().toISOString() };
 }
 
@@ -60,8 +62,8 @@ export default async function handler(req, res) {
       }
       rows.sort((a, b) => b.score - a.score || a.ms - b.ms);
       return res.status(200).json({
-        rows: rows.slice(0, 20).map(({ id, name, score, total, ms, eur, usd, gbp }) =>
-          ({ id, name, score, total, ms, eur, usd, gbp })),
+        rows: rows.slice(0, 20).map(({ id, name, mat, score, total, ms, eur, usd, gbp }) =>
+          ({ id, name, mat, score, total, ms, eur, usd, gbp })),
         count: rows.length,
       });
     }
@@ -73,8 +75,11 @@ export default async function handler(req, res) {
       if (prev) {
         const p = JSON.parse(prev);
         const better = entry.score > p.score || (entry.score === p.score && entry.ms < p.ms);
-        if (!better) {                       // keep the best attempt, refresh the name only
-          if (p.name !== entry.name) { p.name = entry.name; await r.hSet(KEY, entry.id, JSON.stringify(p)); }
+        if (!better) {                       // keep the best attempt, refresh the identity only
+          if (p.name !== entry.name || p.mat !== entry.mat) {
+            p.name = entry.name; p.mat = entry.mat;
+            await r.hSet(KEY, entry.id, JSON.stringify(p));
+          }
           return res.status(200).json({ saved: false, best: p });
         }
       }
