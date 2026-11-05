@@ -21,13 +21,28 @@ Deux formes de question coexistent :
 Les trois questions UV et infrarouge utilisent les images officielles de la brochure
 *The Europa series of banknotes* de la Banque centrale européenne (© BCE 2019).
 
-### Photos de faux billets à fournir
+### Images des questions UV / infrarouge
 
-Les neuf vignettes encore marquées **IMAGE À FOURNIR** attendent les photos de faux billets.
-Pour les intégrer : ajouter chaque photo dans `IMGS` (`index.html`) sous une clé propre,
-puis remplacer les `"todo"` correspondants dans le tableau `fakes` de la question.
-Tant que ces images restent des marques de réservation, la bonne réponse se devine
-au premier coup d’œil : ces trois questions ne comptent pas réellement.
+Les quatre questions à choix d'image opposent un billet authentique à des faux
+photographiés par le formateur :
+
+| Question | Authentique | Faux |
+| --- | --- | --- |
+| 100 € UV | brochure BCE | 5 (`uvA`, `uvB`, `uv1`–`uv3`) |
+| 50 € UV | brochure BCE | 3 (`uv50a`–`uv50c`) |
+| 50 € infrarouge | brochure BCE | 3 (`ir50a`–`ir50c`) |
+| 100 € infrarouge | brochure BCE | 3 (`ir100a`–`ir100c`) |
+
+Pour ajouter un faux : placer la photo dans `IMGS` sous une clé propre, puis
+ajouter cette clé au tableau `fakes` de la question. Avec plus de faux que de
+vignettes, la série change d'une tentative à l'autre.
+
+**Réserve connue.** Les images authentiques viennent de la brochure de la BCE et
+n'ont pas le même rendu que les photos de faux : contraste, couleurs et netteté
+diffèrent. Un candidat peut donc désigner l'authentique sans rien connaître des
+signes de sécurité, simplement parce que la vignette détonne. Pour y remédier,
+photographier un billet authentique dans les mêmes conditions que les faux
+(même lampe, même caméra) et remplacer la valeur de `genuine`.
 
 > Si le nombre de questions change, mettre à jour `MAX` dans `api/scores.js`
 > (`{ eur, usd, gbp }`), sinon les scores valides seront refusés — et remettre
