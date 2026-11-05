@@ -7,27 +7,31 @@ pour la formation « Détection et identification des faux billets de banque ét
 
 ## Les questions
 
-18 questions au total : 8 pour l’euro, 5 pour le dollar, 5 pour la livre.
+19 questions au total : 9 pour l’euro, 5 pour le dollar, 5 pour la livre.
 Deux formes de question coexistent :
 
 - **zone à toucher** — un billet s’affiche, le candidat touche l’endroit du signe demandé ;
 - **choix d’image** (`type: "pick"`) — plusieurs billets côte à côte, le candidat
-  désigne l’authentique. L’ordre des vignettes est mélangé à chaque affichage.
+  désigne l’authentique. Chaque question déclare `genuine` (le billet authentique),
+  `fakes` (le vivier de faux) et `show` (le nombre de vignettes). À chaque affichage,
+  le billet authentique est tiré avec un sous-ensemble aléatoire des faux, puis
+  l’ordre est mélangé : avec plus de faux que de vignettes, la série change d’une
+  tentative à l’autre.
 
 Les trois questions UV et infrarouge utilisent les images officielles de la brochure
 *The Europa series of banknotes* de la Banque centrale européenne (© BCE 2019).
 
 ### Photos de faux billets à fournir
 
-Les sept vignettes encore marquées **IMAGE À FOURNIR** attendent les photos de faux billets.
+Les neuf vignettes encore marquées **IMAGE À FOURNIR** attendent les photos de faux billets.
 Pour les intégrer : ajouter chaque photo dans `IMGS` (`index.html`) sous une clé propre,
-puis remplacer les `{ img: "todo" }` correspondants dans les questions `type: "pick"`.
+puis remplacer les `"todo"` correspondants dans le tableau `fakes` de la question.
 Tant que ces images restent des marques de réservation, la bonne réponse se devine
 au premier coup d’œil : ces trois questions ne comptent pas réellement.
 
 > Si le nombre de questions change, mettre à jour `MAX` dans `api/scores.js`
 > (`{ eur, usd, gbp }`), sinon les scores valides seront refusés — et remettre
-> le classement à zéro, pour ne pas mélanger des scores sur 15 et sur 18.
+> le classement à zéro, pour ne pas mélanger des scores sur 15, sur 18 et sur 19.
 - `api/scores.js` — l’API du classement (fonction Vercel, base Redis via `REDIS_URL`)
 - `admin.html` — remise à zéro du classement entre deux sessions
 

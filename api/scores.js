@@ -12,7 +12,7 @@ const REDIS_URL = process.env.REDIS_URL || process.env.KV_URL;
 const KEY = "quiz:scores";
 // Questions per test, in the same order as TESTS in index.html.
 // Keep these in step with the quiz, or valid attempts will be rejected.
-const MAX = { eur: 8, usd: 5, gbp: 5 };
+const MAX = { eur: 9, usd: 5, gbp: 5 };
 const TOTAL = MAX.eur + MAX.usd + MAX.gbp;
 
 // One client per warm function instance, reconnected only when it has dropped.
