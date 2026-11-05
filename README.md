@@ -23,26 +23,32 @@ Les trois questions UV et infrarouge utilisent les images officielles de la broc
 
 ### Images des questions UV / infrarouge
 
-Les quatre questions à choix d'image opposent un billet authentique à des faux
-photographiés par le formateur :
+Les quatre questions à choix d'image opposent un billet authentique à trois
+variantes défectueuses, toutes dérivées de la même image : le rendu est donc
+identique et seul le signe de sécurité distingue la bonne réponse.
 
-| Question | Authentique | Faux |
+Les images authentiques viennent de la brochure *The Europa series of banknotes*
+de la BCE (© BCE 2019). Chaque variante reproduit un défaut réel :
+
+| Question | Authentique | Défauts des variantes |
 | --- | --- | --- |
-| 100 € UV | brochure BCE | 5 (`uvA`, `uvB`, `uv1`–`uv3`) |
-| 50 € UV | brochure BCE | 3 (`uv50a`–`uv50c`) |
-| 50 € infrarouge | brochure BCE | 3 (`ir50a`–`ir50c`) |
-| 100 € infrarouge | brochure BCE | 3 (`ir100a`–`ir100c`) |
+| 100 € UV | `uv100` | papier fluorescent · fluorescence orange · impression non fluorescente |
+| 50 € UV | `uv50` | idem |
+| 100 € infrarouge | `ir100` | rien ne disparaît · trop subsiste · nombre de valeur absent |
+| 50 € infrarouge | `ir50` | trop subsiste · presque rien ne subsiste · nombre de valeur absent |
 
-Pour ajouter un faux : placer la photo dans `IMGS` sous une clé propre, puis
+Ces défauts correspondent aux contrôles publiés par la BCE : sous UV le papier ne
+doit pas briller, les étoiles et les petits cercles brillent en jaune ; en
+infrarouge la majeure partie de l'impression disparaît et seuls le nombre de
+valeur, la partie droite de l'image principale et la bande de droite subsistent.
+
+Les variantes sont produites par `forge_all.py` (hors dépôt) à partir des images
+authentiques. Ce sont des reconstitutions pédagogiques, pas des photographies de
+faux saisis : elles illustrent des modes de défaillance documentés.
+
+Pour ajouter un faux : placer l'image dans `IMGS` sous une clé propre, puis
 ajouter cette clé au tableau `fakes` de la question. Avec plus de faux que de
 vignettes, la série change d'une tentative à l'autre.
-
-**Réserve connue.** Les images authentiques viennent de la brochure de la BCE et
-n'ont pas le même rendu que les photos de faux : contraste, couleurs et netteté
-diffèrent. Un candidat peut donc désigner l'authentique sans rien connaître des
-signes de sécurité, simplement parce que la vignette détonne. Pour y remédier,
-photographier un billet authentique dans les mêmes conditions que les faux
-(même lampe, même caméra) et remplacer la valeur de `genuine`.
 
 > Si le nombre de questions change, mettre à jour `MAX` dans `api/scores.js`
 > (`{ eur, usd, gbp }`), sinon les scores valides seront refusés — et remettre
