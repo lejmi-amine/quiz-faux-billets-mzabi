@@ -7,7 +7,7 @@ pour la formation « Détection et identification des faux billets de banque ét
 
 ## Les questions
 
-19 questions au total : 9 pour l’euro, 5 pour le dollar, 5 pour la livre.
+20 questions au total : 9 pour l’euro, 6 pour le dollar, 5 pour la livre.
 Deux formes de question coexistent :
 
 - **zone à toucher** — un billet s’affiche, le candidat touche l’endroit du signe demandé ;
@@ -36,14 +36,25 @@ de la BCE (© BCE 2019). Chaque variante reproduit un défaut réel :
 | 50 € UV | `uv50` | idem |
 | 100 € infrarouge | `ir100` | rien ne disparaît · trop subsiste · nombre de valeur absent |
 | 50 € infrarouge | `ir50` | trop subsiste · presque rien ne subsiste · nombre de valeur absent |
+| 100 $ UV | `usdUV` | fil bleu (5 $ blanchi) · fil jaune (50 $ blanchi) · fil éteint · papier fluorescent |
 
 Ces défauts correspondent aux contrôles publiés par la BCE : sous UV le papier ne
 doit pas briller, les étoiles et les petits cercles brillent en jaune ; en
 infrarouge la majeure partie de l'impression disparaît et seuls le nombre de
 valeur, la partie droite de l'image principale et la bande de droite subsistent.
 
-Les variantes sont produites par `forge_all.py` (hors dépôt) à partir des images
-authentiques. Ce sont des reconstitutions pédagogiques, pas des photographies de
+La question sur le dollar part du détail du fil de sécurité publié par le
+U.S. Currency Education Program (*Decoding Dollars: the $100*). Le fil doit
+briller en rose ; chaque coupure a sa couleur (100 $ rose, 50 $ jaune, 20 $ vert,
+10 $ orange, 5 $ bleu), si bien qu'un billet blanchi puis réimprimé se trahit par
+la couleur du fil. Ses vignettes sont au format portrait via `tileAr`.
+
+Pas de question infrarouge pour le dollar : les autorités américaines ne publient
+pas d'images infrarouge des billets, et inventer un rendu enseignerait un faux
+repère.
+
+Les variantes sont produites par `tools-forge_all.py` et `tools-forge_usd.py` à
+partir des images authentiques. Ce sont des reconstitutions pédagogiques, pas des photographies de
 faux saisis : elles illustrent des modes de défaillance documentés.
 
 Pour ajouter un faux : placer l'image dans `IMGS` sous une clé propre, puis
