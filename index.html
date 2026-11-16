@@ -416,11 +416,7 @@
       <div id="screen-intro">
         <span class="tag">Devises convertibles · Évaluation</span>
         <h1>Retrouvez les signes de sécurité</h1>
-        <p class="muted">
-          Trois tests de 5 questions, à faire à la suite : euro, dollar, puis
-          livre sterling. Pour chaque question, touchez directement la zone du
-          billet où se trouve le signe demandé.
-        </p>
+        <p class="muted" id="introText"></p>
         <div class="tests" id="testList"></div>
         <div class="card">
           <div
@@ -549,7 +545,7 @@
         {
           key: "eur",
           name: "Euro",
-          title: "Retrouvez les signes de sécurité — 100 €",
+          title: "Retrouvez les signes de sécurité — 50 et 100 €",
           qs: [
             {
               cur: "100 €",
@@ -793,6 +789,33 @@
         }
         window.scrollTo(0, 0);
       }
+      function hasPick(t) {
+        return t.qs.some(function (q) {
+          return q.type === "pick";
+        });
+      }
+      function howToAnswer(t) {
+        return hasPick(t)
+          ? "touchez la zone demandée, ou désignez le billet authentique, selon la question."
+          : "touchez la zone du billet correspondant au signe demandé.";
+      }
+      /* Written from the questions themselves, so it cannot drift out of
+         date when questions are added. */
+      function paintIntro() {
+        var parts = TESTS.map(function (t) {
+          return t.name.toLowerCase() + " (" + t.qs.length + ")";
+        });
+        el("introText").textContent =
+          TESTS.length +
+          " tests à faire à la suite, " +
+          TOTAL +
+          " questions en tout : " +
+          parts.join(", ") +
+          ". " +
+          (TESTS.some(hasPick)
+            ? "Selon la question, touchez la zone du billet où se trouve le signe demandé, ou désignez le billet authentique parmi plusieurs."
+            : "Pour chaque question, touchez directement la zone du billet où se trouve le signe demandé.");
+      }
       function paintList() {
         el("testList").innerHTML = TESTS.map(function (t, i) {
           var d = parts[i];
@@ -813,6 +836,7 @@
           );
         }).join("");
       }
+      paintIntro();
       paintList();
 
       /* ---------- flow: test 1 -> test 2 -> test 3 -> result ---------- */
@@ -845,8 +869,7 @@
         el("stCur").textContent = t.name;
         el("stTitle").textContent = t.title;
         el("stSub").textContent =
-          t.qs.length +
-          " questions · touchez la zone du billet correspondant au signe demandé.";
+          t.qs.length + " questions · " + howToAnswer(t);
         show("stage");
       }
       function beginTest() {
