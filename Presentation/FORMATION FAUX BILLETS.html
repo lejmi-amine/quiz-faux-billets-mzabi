@@ -2017,7 +2017,7 @@ img{-webkit-user-drag:none;user-drag:none}
                 var f = DATA[key]; if(!f) return;
                 zones.forEach(function(z){ z.classList.remove("active"); });
                 if (el) el.classList.add("active");
-                detail.innerHTML = '<div class="dk">Signe de sécurité</div><h3>'+f.t+'</h3><p>'+f.d+'</p>';
+                detail.innerHTML = '<div class="dk">Signe de sécurité<\/div><h3>'+f.t+'<\/h3><p>'+f.d+'<\/p>';
               }
               zones.forEach(function(z){
                 z.addEventListener("click", function(e){ if (moved) return; showDetail(z.getAttribute("data-key"), z); e.stopPropagation(); });
@@ -2257,7 +2257,7 @@ img{-webkit-user-drag:none;user-drag:none}
                 var f = DATA[key]; if(!f) return;
                 zones.forEach(function(z){ z.classList.remove("active"); });
                 if (el) el.classList.add("active");
-                detail.innerHTML = '<div class="dk">Signe de sécurité</div><h3>'+f.t+'</h3><p>'+f.d+'</p>';
+                detail.innerHTML = '<div class="dk">Signe de sécurité<\/div><h3>'+f.t+'<\/h3><p>'+f.d+'<\/p>';
               }
               zones.forEach(function(z){
                 z.addEventListener("click", function(e){ if (moved) return; showDetail(z.getAttribute("data-key"), z); e.stopPropagation(); });
@@ -2971,7 +2971,7 @@ img{-webkit-user-drag:none;user-drag:none}
       if (i >= qs.length) {
         prompt.textContent = "Test terminé.";
         fb.innerHTML = "<b class='" + (score === qs.length ? "ok" : "no") + "'>" +
-          score + " / " + qs.length + "</b> réponse" + (score > 1 ? "s" : "") + " correcte" +
+          score + " / " + qs.length + "<\/b> réponse" + (score > 1 ? "s" : "") + " correcte" +
           (score > 1 ? "s" : "") + ".";
         prog.textContent = "";
         return;
@@ -2992,8 +2992,8 @@ img{-webkit-user-drag:none;user-drag:none}
       var hit = p.x >= r[0] && p.x <= r[0] + r[2] && p.y >= r[1] && p.y <= r[1] + r[3];
       done = true;
       mark(r, hit ? "good" : "bad");
-      if (hit) { score++; fb.innerHTML = "<b class='ok'>Correct.</b> " + (qs[i].a || ""); }
-      else { fb.innerHTML = "<b class='no'>Pas tout à fait.</b> " + (qs[i].a || ""); }
+      if (hit) { score++; fb.innerHTML = "<b class='ok'>Correct.<\/b> " + (qs[i].a || ""); }
+      else { fb.innerHTML = "<b class='no'>Pas tout à fait.<\/b> " + (qs[i].a || ""); }
       setTimeout(function () { i++; render(); }, 1900);
     });
     again.addEventListener("click", function () { i = 0; score = 0; render(); });
@@ -3031,15 +3031,15 @@ img{-webkit-user-drag:none;user-drag:none}
         t: (h ? h.textContent : "").trim() || ("Diapositive " + (n + 1))
       });
     });
-    var html = "<h3>Sommaire</h3><div class='jm-hint'>Cliquez pour aller à la diapositive · " +
-      "touche S ou Échap pour fermer</div>";
+    var html = "<h3>Sommaire<\/h3><div class='jm-hint'>Cliquez pour aller à la diapositive · " +
+      "touche S ou Échap pour fermer<\/div>";
     secs.forEach(function (sec) {
-      html += "<div class='jm-sec'><b>" + sec.name + "</b><div class='jm-items'>";
+      html += "<div class='jm-sec'><b>" + sec.name + "<\/b><div class='jm-items'>";
       sec.items.forEach(function (it) {
-        html += "<div class='jm-item' data-n='" + it.n + "'><i>" + (it.n + 1) + "</i>" +
-          (it.g ? "<em>" + it.g + "</em>" : "") + it.t + "</div>";
+        html += "<div class='jm-item' data-n='" + it.n + "'><i>" + (it.n + 1) + "<\/i>" +
+          (it.g ? "<em>" + it.g + "<\/em>" : "") + it.t + "<\/div>";
       });
-      html += "</div></div>";
+      html += "<\/div><\/div>";
     });
     menu.innerHTML = html;
     document.body.appendChild(menu);
@@ -3101,8 +3101,8 @@ img{-webkit-user-drag:none;user-drag:none}
       btn = document.createElement("button");
       btn.type = "button";
       btn.className = "lamp-toggle";
-      btn.innerHTML = '<span class="lt-dot"></span><span class="lt-txt"></span>' +
-        '<kbd>U</kbd>';
+      btn.innerHTML = '<span class="lt-dot"><\/span><span class="lt-txt"><\/span>' +
+        '<kbd>U<\/kbd>';
       btn.dataset.on = "0";
       btn.dataset.label = ir ? "tout le billet sous infrarouge"
                              : "tout le billet sous UV";
@@ -3215,16 +3215,16 @@ img{-webkit-user-drag:none;user-drag:none}
 
   var dr = document.createElement("div");
   dr.id = "notesDrawer";
-  dr.innerHTML = '<div class="nd-head"><div><b>Notes du présentateur</b> <span class="nd-num"></span></div>' +
-    '<div><button type="button" class="nd-pres">Fenêtre présentateur (P)</button> ' +
-    '<button type="button" class="nd-close">Fermer (N)</button></div></div><div class="nd-body"></div>';
+  dr.innerHTML = '<div class="nd-head"><div><b>Notes du présentateur<\/b> <span class="nd-num"><\/span><\/div>' +
+    '<div><button type="button" class="nd-pres">Fenêtre présentateur (P)<\/button> ' +
+    '<button type="button" class="nd-close">Fermer (N)<\/button><\/div><\/div><div class="nd-body"><\/div>';
   document.body.appendChild(dr);
 
   function paintDrawer(i) {
     var s = slides[i], html = notesOf(s);
     dr.querySelector(".nd-num").textContent = "— diapositive " + (i + 1) + " / " + slides.length;
     dr.querySelector(".nd-body").innerHTML = html ||
-      '<p class="nd-empty">Pas de texte oral prévu pour cette diapositive.</p>';
+      '<p class="nd-empty">Pas de texte oral prévu pour cette diapositive.<\/p>';
   }
   function toggleDrawer(force) {
     var open = typeof force === "boolean" ? force : !dr.classList.contains("open");
@@ -3237,7 +3237,7 @@ img{-webkit-user-drag:none;user-drag:none}
   dr.querySelector(".nd-pres").addEventListener("click", openPresenter);
 
   /* ---------- presenter window ---------- */
-  var TPL = '<!doctype html><html lang="fr"><head><meta charset="utf-8"><title>Présentateur</title><style>' +
+  var TPL = '<!doctype html><html lang="fr"><head><meta charset="utf-8"><title>Présentateur<\/title><style>' +
     'body{margin:0;background:#070b19;color:#f4f5f7;font-family:"Segoe UI",Roboto,Arial,sans-serif}' +
     '.top{display:flex;justify-content:space-between;align-items:center;padding:14px 22px;background:#0a3663}' +
     '.top b{font-size:1.05rem}.clk{font-variant-numeric:tabular-nums;font-size:1.4rem;font-weight:800;color:#ff7a00}' +
@@ -3247,10 +3247,10 @@ img{-webkit-user-drag:none;user-drag:none}
     'background:rgba(255,122,0,.08);border-left:3px solid #ff7a00;padding:9px 13px;border-radius:6px}' +
     '.nd-empty{color:#8e97a9;font-style:italic}.nav{display:flex;gap:10px;margin-top:18px}' +
     '.nav button{background:#ff7a00;color:#15223f;border:0;border-radius:20px;padding:10px 20px;font-weight:800;cursor:pointer;font-size:.95rem}' +
-    '</style></head><body><div class="top"><b id="num"></b><span class="clk" id="clk">00:00</span></div>' +
-    '<div class="wrap"><p class="lab">Diapositive en cours</p><p class="now" id="now"></p>' +
-    '<p class="lab">Suivante</p><p class="nxt" id="nxt"></p><p class="lab">Notes</p><div class="notes" id="notes"></div>' +
-    '<div class="nav"><button id="prev">◀ Précédente</button><button id="next">Suivante ▶</button></div></div></body></html>';
+    '<\/style><\/head><body><div class="top"><b id="num"><\/b><span class="clk" id="clk">00:00<\/span><\/div>' +
+    '<div class="wrap"><p class="lab">Diapositive en cours<\/p><p class="now" id="now"><\/p>' +
+    '<p class="lab">Suivante<\/p><p class="nxt" id="nxt"><\/p><p class="lab">Notes<\/p><div class="notes" id="notes"><\/div>' +
+    '<div class="nav"><button id="prev">◀ Précédente<\/button><button id="next">Suivante ▶<\/button><\/div><\/div><\/body><\/html>';
 
   function paintPresenter() {
     if (!pw || pw.closed) return;
@@ -3260,7 +3260,7 @@ img{-webkit-user-drag:none;user-drag:none}
     d.getElementById("now").textContent = titleOf(slides[i]) || "—";
     d.getElementById("nxt").textContent = slides[i + 1] ? titleOf(slides[i + 1]) : "Fin de la présentation";
     d.getElementById("notes").innerHTML = notesOf(slides[i]) ||
-      '<p class="nd-empty">Pas de texte oral prévu pour cette diapositive.</p>';
+      '<p class="nd-empty">Pas de texte oral prévu pour cette diapositive.<\/p>';
   }
   function step(dir) {
     var i = idxNow() + dir;
