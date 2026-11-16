@@ -162,6 +162,18 @@
         margin-top: 10px;
         font-size: 0.92rem;
       }
+      /* once answered, the explanation sits in a panel and stays put
+         until the candidate chooses to move on */
+      .fb.shown {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        padding: 12px 14px;
+        line-height: 1.5;
+      }
+      #nextWrap {
+        margin-top: 12px;
+      }
       .fb b.ok {
         color: var(--good);
       }
@@ -461,6 +473,9 @@
         </div>
         <div class="picks hide" id="picks"></div>
         <div class="fb" id="qfb"></div>
+        <div class="row hide" id="nextWrap" style="justify-content: flex-end">
+          <button id="nextQ">Question suivante</button>
+        </div>
       </div>
 
       <div id="screen-done" class="hide">
@@ -824,6 +839,8 @@
         answered = false;
         el("marks").innerHTML = "";
         el("qfb").innerHTML = "";
+        el("qfb").classList.remove("shown");
+        el("nextWrap").classList.add("hide");
         el("picks").innerHTML = "";
         if (qi >= t.qs.length) {
           ti++;
@@ -905,14 +922,35 @@
           else if (i === chosen) b.classList.add("bad");
           else b.classList.add("dim");
         });
-        el("qfb").innerHTML =
+        showFeedback(hit, q);
+      }
+      /* The explanation stays on screen until the candidate presses the
+         button, so there is time to read it. */
+      function nextLabel() {
+        var t = TESTS[ti];
+        if (qi + 1 < t.qs.length) return "Question suivante";
+        if (ti + 1 < TESTS.length) return "Test suivant";
+        return "Voir le résultat";
+      }
+      function showFeedback(hit, q) {
+        var fb = el("qfb");
+        fb.innerHTML =
           (hit
             ? "<b class='ok'>Correct.</b> "
             : "<b class='no'>Pas tout à fait.</b> ") + q.a;
-        setTimeout(function () {
-          qi++;
-          render();
-        }, 2600);
+        fb.classList.add("shown");
+        el("nextQ").textContent = nextLabel();
+        el("nextWrap").classList.remove("hide");
+        try {
+          el("nextQ").focus({ preventScroll: true });
+        } catch (_) {
+          /* older browsers: no focus rather than a jumping page */
+        }
+      }
+      function nextQuestion() {
+        if (!answered) return;
+        qi++;
+        render();
       }
       function markAt(r, cls) {
         var d = document.createElement("div");
@@ -937,14 +975,7 @@
         answered = true;
         markAt(r, hit ? "good" : "bad");
         if (hit) parts[ti]++;
-        el("qfb").innerHTML =
-          (hit
-            ? "<b class='ok'>Correct.</b> "
-            : "<b class='no'>Pas tout à fait.</b> ") + q.a;
-        setTimeout(function () {
-          qi++;
-          render();
-        }, 1700);
+        showFeedback(hit, q);
       });
 
       async function finish() {
@@ -1080,6 +1111,16 @@
       });
       el("mat").addEventListener("keydown", function (e) {
         if (e.key === "Enter") startAll();
+      });
+      el("nextQ").addEventListener("click", nextQuestion);
+      document.addEventListener("keydown", function (e) {
+        // Enter or space moves on, but only once the question is answered
+        if (!answered) return;
+        if (el("screen-quiz").classList.contains("hide")) return;
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          nextQuestion();
+        }
       });
       el("stGo").addEventListener("click", beginTest);
       el("again").addEventListener("click", function () {
